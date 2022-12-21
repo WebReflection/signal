@@ -2,13 +2,14 @@
   "name": "@webreflection/signal",
   "version": "0.0.2",
   "main": "./cjs/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "build": "npm run cjs && npm run test",
     "cjs": "ascjs esm cjs",
-    "test": "c8 node test/index.js",
+    "test": "c8 node test/index.js && echo OK",
     "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
   },
-  "keywords": [],
+  "keywords": ["basic", "signals"],
   "author": "Andrea Giammarchi",
   "license": "ISC",
   "devDependencies": {

@@ -1,86 +1,61 @@
 'use strict';
-const effects = [Function.prototype];
+/*! (c) Andrea Giammarchi */
+
+const effects = [];
 const disposed = new WeakSet;
+const dispatch = effects => {
+  for (const effect of effects) {
+    if (disposed.has(effect))
+      effects.delete(effect);
+    else
+      effect();
+  }
+};
 
-class ImplicitValue {
-  then() { return this.value }
-  toJSON() { return this.value }
-  toString() { return this.value }
-  valueOf() { return this.value }
-}
-
-/** @param {T} value the value carried through the new Signal */
 const signal = value => new Signal(value);
 exports.signal = signal;
-class Signal extends ImplicitValue {
-  /** @type {T} */    #value;
-  /** @type {Set} */  #effects = new Set;
-
-  /** @param {T} value the value carried through the signal */
+class Signal {
   constructor(value) {
-    super().#value = value;
+    this._value = value;
+    this._effects = new Set;
   }
-
-  /** @returns {T} */
   get value() {
-    this.#effects.add(effects.at(-1));
-    return this.#value;
+    const {length} = effects;
+    if (length) this._effects.add(effects[length - 1]);
+    return this._value;
   }
-
-  /** @param {T} value the new value carried through the signal */
   set value(value) {
-    if (this.#value !== value) {
-      this.#value = value;
-      for (const effect of this.#effects) {
-        if (disposed.has(effect))
-          this.#effects.delete(effect);
-        else
-          effect();
-      }
+    if (this._value !== value) {
+      this._value = value;
+      dispatch(this._effects);
     }
   }
-
-  // EXPLICIT NO SIDE EFFECTS
-  peek() { return this.#value }
+  peek() { return this._value }
+  then() { return this.value }
+  toJSON() { return this.value }
+  valueOf() { return this.value }
+  toString() { return String(this.value) }
 }
 exports.Signal = Signal
 
-/**
- * Computeds are read-only signal wrappers that can be disposed.
- * @param {function():T} fn the computed callback 
- * @param {T?} initialValue optional value passed each time
- */
-const computed = (fn, initialValue) => new Computed(fn, initialValue);
+const computed = (fn, value) => new Computed(fn, value);
 exports.computed = computed;
-class Computed extends ImplicitValue {
-  /** @type {T} */    #value;
-  /**
-   * Computeds are read-only signals wrappers that can be disposed.
-   * @param {function():T} fn the callback that returns the signal value
-   * @param {T?} initialValue optional value passed each time
-   */
-  constructor(fn, initialValue) {
-    super().#value = initialValue;
-    this.dispose = effect(() => {
-      this.#value = fn(this.#value);
+class Computed extends Signal {
+  constructor(fn, value) {
+    super(value).dispose = effect(() => {
+      this._value = fn(this._value);
+      dispatch(this._effects);
     });
   }
-
-  /** @returns {T} */
-  get value() { return this.#value }
-
-  /** @returns {T} */
-  peek() { return this.#value }
+  get value() { return super.value }
+  set value(_) { throw _ }
 }
 exports.Computed = Computed
 
-/**
- * @param {function():void} fn the callback to invoke as effect
- * @returns {function():void} a callback to dispose the effect
- */
-const effect = fn => {
-  effects.push(fn);
-  try { return fn(), () => { disposed.add(fn) } }
+const effect = (fn, value) => {
+  const fx = () => { value = fn(value) };
+  effects.push(fx);
+  try { return fx(), () => { disposed.add(fx) } }
   finally { effects.pop() }
 };
 exports.effect = effect;
