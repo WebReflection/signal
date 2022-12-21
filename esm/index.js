@@ -12,6 +12,21 @@ const dispatch = (effects, invoke) => {
   }
 };
 
+let batches = effects;
+export const batch = callback => {
+  const root = batches === effects;
+  if (root)
+    batches = [];
+  try { callback() }
+  finally {
+    if (root) {
+      const set = new Set(batches);
+      batches = effects;
+      dispatch(set, true);
+    }
+  }
+};
+
 export const drain = Symbol();
 
 export const signal = value => new Signal(value);
@@ -31,7 +46,10 @@ export class Signal {
       dispatch(this._effects, false);
     else if (this._value !== value) {
       this._value = value;
-      dispatch(this._effects, true);
+      if (batches === effects)
+        dispatch(this._effects, true);
+      else
+        batches.push(...this._effects);
     }
   }
   peek() { return this._value }
@@ -60,10 +78,8 @@ export const effect = (fn, value) => {
       dispose();
   };
   disposes.set(fx, []);
-  const {length} = effects;
-  if (length)
-    disposes.get(effects[length - 1]).push(dispose);
-  effects.push(fx);
+  const i = effects.push(fx) - 1;
+  if (i) disposes.get(effects[i - 1]).push(dispose);
   try { return fx(), dispose }
   finally { effects.pop() }
 };

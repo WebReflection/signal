@@ -1,4 +1,4 @@
-const {signal, computed, effect, drain} = require('../cjs');
+import {signal, computed, effect, batch, drain} from '../esm/index.js';
 
 const assert = (got, expected) => {
   if (got !== expected) {
@@ -66,3 +66,40 @@ assert(runs, 3);
 outer();
 ++double.value;
 assert(runs, 3);
+
+runs = 0;
+const d1 = effect(() => {
+  runs++;
+  console.log('');
+  console.log('batched effect 1', single.value);
+  console.log('batched effect 2', double.value);
+});
+
+assert(runs, 1);
+batch(() => {
+  single.value++;
+  double.value++;
+});
+assert(runs, 2);
+d1();
+assert(runs, 2);
+
+const cmp = computed(() => single + double);
+
+console.log('');
+runs = 0;
+const d2 = effect(() => {
+  runs++;
+  console.log('batched computed', cmp.value);
+});
+
+assert(runs, 1);
+batch(() => {
+  single.value++;
+  double.value++;
+});
+assert(runs, 2);
+d2();
+assert(runs, 2);
+single.value++;
+assert(runs, 2);
