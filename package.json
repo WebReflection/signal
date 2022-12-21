@@ -1,6 +1,6 @@
 {
   "name": "@webreflection/signal",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "./cjs/index.js",
   "scripts": {
     "build": "npm run cjs && npm run test",
