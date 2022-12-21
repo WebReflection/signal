@@ -1,11 +1,10 @@
 # @webreflection/signal
 
-A very basic signals implementation.
+A minimalistic signals implementation.
 
-  * no nested effects
-  * no automatic effect disposal
+  * no automatic effect disposal except when an outer effect has inner effects and its `dispose()` is invoked
   * computed are updated per each signal change they depend on
-  * everything is extremely simplified to provide just a playground for signals
+  * no fancy features like in other libraries *except* there is a `drain` export which, if used as `signal.value = drain` will simply loop over disposed effects and free them from the relationship right away: the signal value won't change, and no active effect will be ever notified
 
 ### exports
 
@@ -14,5 +13,6 @@ A very basic signals implementation.
   * `effect(fn[, initialValue])` to create an effect and return a dispose function
   * `Signal` to compare via `instanceof Signal` instances
   * `Computed` to compare via `instanceof Computed` instances
+  * `drain` unique symbol to use as *signals*' value whenever dropping diposed effects from their stack might be desired
 
 Both *computed* and *effect* accepts an initial value to pass to the callback. The callback will keep receiving the previous value on each new invoke.

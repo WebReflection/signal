@@ -1,4 +1,4 @@
-const {signal, computed, effect} = require('../cjs');
+const {signal, computed, effect, drain} = require('../cjs');
 
 const assert = (got, expected) => {
   if (got !== expected) {
@@ -28,6 +28,10 @@ assert(min.value, 12);
 sum.dispose();
 assert(min.value, 12);
 
+assert(single.peek(), 2);
+single.value = drain;
+assert(single.peek(), 2);
+
 single.value++;
 double.value++;
 triple.value++;
@@ -45,3 +49,20 @@ try {
   assert('assignment', 'cannot assign computed');
 }
 catch (OK) {}
+
+let runs = 0;
+const outer = effect(() => {
+  runs++;
+  console.log('outer effect', single.value);
+  effect(() => {
+    runs++;
+    console.log('inner effect', double.value);
+  });
+});
+
+assert(runs, 2);
+++double.value;
+assert(runs, 3);
+outer();
+++double.value;
+assert(runs, 3);

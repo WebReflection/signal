@@ -3,14 +3,18 @@
 
 const effects = [];
 const disposed = new WeakSet;
-const dispatch = effects => {
+const disposes = new WeakMap;
+const dispatch = (effects, invoke) => {
   for (const effect of effects) {
     if (disposed.has(effect))
       effects.delete(effect);
-    else
+    else if (invoke)
       effect();
   }
 };
+
+const drain = Symbol();
+exports.drain = drain;
 
 const signal = value => new Signal(value);
 exports.signal = signal;
@@ -21,13 +25,16 @@ class Signal {
   }
   get value() {
     const {length} = effects;
-    if (length) this._effects.add(effects[length - 1]);
+    if (length)
+      this._effects.add(effects[length - 1]);
     return this._value;
   }
   set value(value) {
-    if (this._value !== value) {
+    if (value === drain)
+      dispatch(this._effects, false);
+    else if (this._value !== value) {
       this._value = value;
-      dispatch(this._effects);
+      dispatch(this._effects, true);
     }
   }
   peek() { return this._value }
@@ -43,19 +50,27 @@ exports.computed = computed;
 class Computed extends Signal {
   constructor(fn, value) {
     super(value).dispose = effect(() => {
-      this._value = fn(this._value);
-      dispatch(this._effects);
+      super.value = fn(this._value);
     });
   }
   get value() { return super.value }
-  set value(_) { throw _ }
+  set value(_) { throw new Error('computed.value is read-only') }
 }
 exports.Computed = Computed
 
 const effect = (fn, value) => {
   const fx = () => { value = fn(value) };
+  const dispose = () => {
+    disposed.add(fx);
+    for (const dispose of disposes.get(fx))
+      dispose();
+  };
+  disposes.set(fx, []);
+  const {length} = effects;
+  if (length)
+    disposes.get(effects[length - 1]).push(dispose);
   effects.push(fx);
-  try { return fx(), () => { disposed.add(fx) } }
+  try { return fx(), dispose }
   finally { effects.pop() }
 };
 exports.effect = effect;

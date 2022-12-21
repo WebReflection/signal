@@ -1,16 +1,18 @@
 {
   "name": "@webreflection/signal",
+  "description": "A minimalistic signals implementation",
   "version": "0.1.0",
   "main": "./cjs/index.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "build": "npm run cjs && npm run test",
+    "build": "npm run cjs && npm run test && npm run size",
     "cjs": "ascjs esm cjs",
-    "test": "c8 node test/index.js && echo OK",
+    "test": "c8 node test/index.js",
+    "size": "cat esm/index.js | brotli | wc -c",
     "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
   },
   "keywords": [
-    "basic",
+    "minimalistic",
     "signals"
   ],
   "author": "Andrea Giammarchi",
@@ -36,6 +38,5 @@
   "bugs": {
     "url": "https://github.com/WebReflection/signal/issues"
   },
-  "homepage": "https://github.com/WebReflection/signal#readme",
-  "description": ""
+  "homepage": "https://github.com/WebReflection/signal#readme"
 }

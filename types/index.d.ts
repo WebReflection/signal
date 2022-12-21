@@ -19,3 +19,5 @@ export const signal: <T>(value?: T) => Signal<T>;
 export const computed: <T>(fn: (v?: T) => T, value?: T) => Computed<T>;
 
 export const effect: (fn: (v?: T) => T, value?: T) => () => void;
+
+export const drain: Symbol;
