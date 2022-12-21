@@ -1,5 +1,7 @@
 # @webreflection/signal
 
+<sup>**Social Media Photo by [Louis Reed](https://unsplash.com/@_louisreed) on [Unsplash](https://unsplash.com/)**</sup>
+
 A minimalistic signals implementation.
 
   * no automatic effect disposal except when an outer effect has inner effects and its `dispose()` is invoked
