@@ -7,6 +7,8 @@ const assert = (got, expected) => {
   }
 };
 
+console.time('@webreflection/signal');
+
 const single = signal(1);
 const double = signal(10);
 const triple = signal(100);
@@ -103,3 +105,5 @@ d2();
 assert(runs, 2);
 single.value++;
 assert(runs, 2);
+
+console.timeEnd('@webreflection/signal');
