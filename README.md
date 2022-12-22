@@ -8,13 +8,15 @@ A minimalistic signals implementation derived from the post [Signals: the nitty-
 
   * no automatic effect disposal except when an outer effect has inner effects and the outer effect `dispose()` is invoked
   * computed are updated per each signal change they depend on, unless a `batch` operation is updating all inner signals at once
-  * no fancy features from other libraries *except* there is a `drain` export which, if used as `signal.value = drain`, will simply loop over disposed effects and free them from the relationship right away: the signal value won't change, and no active effect will ever be notified
+  * no fancy features from other libraries *except* there is a `drain` symbol exported which, if used as `signal.value = drain`, will simply loop over disposed effects and free them from the relationship right away: the signal value won't change, and no active effect will ever be notified
+
+For anything more complex please check [usignal](https://github.com/WebReflection/usignal#readme) out.
 
 ### exports
 
   * `signal(value)` to create a new signal with a reactive `.value`
   * `computed(fn[, initialValue])` to create a computed signal with a read-only `.value` and a `.dispose()` method
-  * `effect(fn[, initialValue])` to create an effect and return a dispose function
+  * `effect(fn[, stateValue])` to create an effect and return a dispose function
   * `batch(fn)` to update multiple signals at once and invoke related effects once
   * `Signal` to compare via `instanceof Signal` instances
   * `Computed` to compare via `instanceof Computed` instances
