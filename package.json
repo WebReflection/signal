@@ -1,7 +1,7 @@
 {
   "name": "@webreflection/signal",
   "description": "A minimalistic signals implementation",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "./cjs/index.js",
   "types": "./types/index.d.ts",
   "scripts": {
