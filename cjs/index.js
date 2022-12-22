@@ -6,8 +6,8 @@
  * @template T
  */
 class Signal {
-  /** @type {T} */              #value;
-  /** @type {Set<function>} */  #effects = new Set;
+  #value;
+  #effects = [];
 
   /** @param {T} value the value carried through the signal */
   constructor(value) { this.#value = value }
@@ -16,20 +16,20 @@ class Signal {
   get value() {
     const {length} = effects;
     if (length)
-      this.#effects.add(effects[length - 1]);
+      this.#effects.push(effects[length - 1]);
     return this.#value;
   }
 
   /** @param {T} value the new value carried through the signal */
   set value(value) {
-    if (value === drain)
-      dispatch(this.#effects, false);
-    else if (this.#value !== value) {
+    if (this.#value !== value) {
       this.#value = value;
-      if (batches === effects)
-        dispatch(this.#effects, true);
-      else
-        batches.push(...this.#effects);
+      if (this.#effects.length) {
+        if (batches === effects)
+          dispatch(this.#effects.splice(0));
+        else
+          batches.push(...this.#effects.splice(0));
+      }
     }
   }
 
@@ -86,9 +86,9 @@ const batch = fn => {
   try { fn() }
   finally {
     if (root) {
-      const set = new Set(batches);
+      const all = batches;
       batches = effects;
-      dispatch(set, true);
+      dispatch(all);
     }
   }
 };
@@ -104,31 +104,30 @@ const computed = (fn, value) => new Computed(fn, value);
 exports.computed = computed;
 
 /**
- * A unique identifier to instantly free any signal from disposed effects.
- * @type {symbol}
- */
-const drain = Symbol();
-exports.drain = drain;
-
-/**
  * Invokes a function when any of its internal signals or computed values change.
  * Returns a `dispose` callback.
  * @template T
  * @type {<T>(fn: (v?: T) => T | undefined, value?: T) => () => void}
  */
 const effect = (fn, value) => {
-  const fx = () => { value = fn(value) };
+  let active = true;
+  const fx = () => {
+    if (active) {
+      effects.push(fx);
+      try { value = fn(value) }
+      finally { effects.pop() }
+    }
+  };
   const dispose = () => {
-    disposed.add(fx);
+    active = false;
     for (const dispose of disposes.get(fx))
       dispose();
   };
   disposes.set(fx, []);
-  const length = effects.push(fx) - 1;
+  const {length} = effects;
   if (length)
     disposes.get(effects[length - 1]).push(dispose);
-  try { return fx(), dispose }
-  finally { effects.pop() }
+  return fx(), dispose;
 };
 exports.effect = effect;
 
@@ -141,15 +140,10 @@ const signal = value => new Signal(value);
 exports.signal = signal;
 
 const effects = [];
-const disposed = new WeakSet;
 const disposes = new WeakMap;
-const dispatch = (effects, invoke) => {
-  for (const effect of effects) {
-    if (disposed.has(effect))
-      effects.delete(effect);
-    else if (invoke)
-      effect();
-  }
+const dispatch = effects => {
+  for (const effect of new Set(effects))
+    effect();
 };
 
 let batches = effects;
