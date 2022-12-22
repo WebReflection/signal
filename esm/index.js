@@ -69,7 +69,7 @@ export class Computed extends Signal {
   get value() { return super.value }
 
   /** @throws {Error} */
-  set value(_) { throw new Error('computed.value is read-only') }
+  set value(_) { throw new Error('computed is read-only') }
 }
 
 /**
