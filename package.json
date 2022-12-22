@@ -10,7 +10,7 @@
     "test": "c8 node test/index.js",
     "size": "cat es.js | wc -c && cat es.js | brotli | wc -c",
     "rollup:es": "rollup --config rollup/es.config.js && sed -i 's/),this.dispose/).dispose/' es.js",
-    "types": "tsc -p . && sed -i \"s/dispose: () => void;/dispose: () => void;\\n    \\/** @readonly @returns {T} *\\/\\n    get value(): T;/\" types/index.d.ts",
+    "types": "tsc -p . && sed -i \"s/dispose: () => void;/dispose: () => void;\\n    \\/** @readonly @returns {T} *\\/\\n    get value(): T;/\" types/{index,spliced}.d.ts",
     "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
   },
   "keywords": [
@@ -34,6 +34,10 @@
     ".": {
       "import": "./esm/index.js",
       "default": "./cjs/index.js"
+    },
+    "./spliced": {
+      "import": "./esm/spliced.js",
+      "default": "./cjs/spliced.js"
     },
     "./package.json": "./package.json"
   },
