@@ -124,8 +124,9 @@ const effect = (fn, value) => {
       dispose();
   };
   disposes.set(fx, []);
-  const i = effects.push(fx) - 1;
-  if (i) disposes.get(effects[i - 1]).push(dispose);
+  const length = effects.push(fx) - 1;
+  if (length)
+    disposes.get(effects[length - 1]).push(dispose);
   try { return fx(), dispose }
   finally { effects.pop() }
 };
