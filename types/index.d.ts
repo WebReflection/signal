@@ -1,4 +1,4 @@
-/*! (c) Andrea Giammarchi */
+/** (c) Andrea Giammarchi - ISC */
 /**
  * A signal with a value property also exposed via toJSON, toString and valueOf.
  * @template T
@@ -21,16 +21,21 @@ export class Signal<T> {
  * A read-only Signal extend that is invoked only when any of the internally
  * used signals, as in within the callback, is unknown or updated.
  * @template T
+ * @extends {Signal<T>}
  */
-export class Computed<T> extends Signal<any> {
+export class Computed<T> extends Signal<T> {
     /**
      * @param {(v?: T) => T} fn the callback invoked when its signals changes
      * @param {T | undefined} value the optional initial value of the callback
      */
     constructor(fn: (v?: T) => T, value: T | undefined);
-    readonly set value(arg: T);
+    /**
+     * Disposes the computed effect to stop receiving updates.
+     * @type {() => void}
+     */
+    dispose: () => void;
     /** @readonly @returns {T} */
-    readonly get value(): T;
+    get value(): T;
 }
 /**
  * Invoke a callback that updates many signals and runs effects only after.

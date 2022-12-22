@@ -23,3 +23,41 @@ For anything more complex please check [usignal](https://github.com/WebReflectio
   * `drain` unique symbol, to use as *signals.value = drain*' whenever dropping diposed effects from their stack might be desired
 
 Both *computed* and *effect* accepts an initial value to pass to the callback. The callback will keep receiving the previous value on each new invoke.
+
+
+### eample
+
+```js
+// import {signal, effect} from 'https://unpkg.com/@webreflection/signal';
+// const {signal, effect} = require('@webreflection/signal');
+import {signal, effect} from '@webreflection/signal';
+
+const single = signal(1);
+const double = signal(10);
+const triple = signal(100);
+
+const dispose1 = effect(() => {
+  console.log(`
+  #1 effect
+    single: ${single}
+    double: ${double}
+  `);
+});
+
+const dispose2 = effect(() => {
+  console.log(`
+  #2 effect
+    double: ${double}
+    triple: ${triple}
+  `);
+});
+
+++double.value;
+// logs single 1, double 11
+// logs double 11, triple 100
+
+dispose2();
+
+++double.value;
+// logs single 1, double 11
+```

@@ -1,5 +1,5 @@
 'use strict';
-/*! (c) Andrea Giammarchi */
+/** (c) Andrea Giammarchi - ISC */
 
 /**
  * A signal with a value property also exposed via toJSON, toString and valueOf.
@@ -48,6 +48,7 @@ exports.Signal = Signal
  * A read-only Signal extend that is invoked only when any of the internally
  * used signals, as in within the callback, is unknown or updated.
  * @template T
+ * @extends {Signal<T>}
  */
 class Computed extends Signal {
   /**
@@ -55,7 +56,13 @@ class Computed extends Signal {
    * @param {T | undefined} value the optional initial value of the callback
    */
   constructor(fn, value) {
-    super(value).dispose = effect(() => {
+    super(value);
+
+    /**
+     * Disposes the computed effect to stop receiving updates.
+     * @type {() => void}
+     */
+    this.dispose = effect(() => {
       super.value = fn(this.peek());
     });
   }
@@ -63,6 +70,7 @@ class Computed extends Signal {
   /** @readonly @returns {T} */
   get value() { return super.value }
 
+  /** @throws {Error} */
   set value(_) { throw new Error('computed.value is read-only') }
 }
 exports.Computed = Computed
