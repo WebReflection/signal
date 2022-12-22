@@ -139,7 +139,6 @@ exports.effect = effect;
 const signal = value => new Signal(value);
 exports.signal = signal;
 
-
 const effects = [];
 const disposed = new WeakSet;
 const disposes = new WeakMap;

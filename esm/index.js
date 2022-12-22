@@ -131,7 +131,6 @@ export const effect = (fn, value) => {
  */
 export const signal = value => new Signal(value);
 
-
 const effects = [];
 const disposed = new WeakSet;
 const disposes = new WeakMap;
