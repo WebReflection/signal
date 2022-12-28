@@ -50,11 +50,6 @@ export const batch: (fn: () => void) => void;
  */
 export const computed: <T>(fn: (v?: T) => T, value?: T) => Computed<T>;
 /**
- * A unique identifier to instantly free any signal from disposed effects.
- * @type {symbol}
- */
-export const drain: symbol;
-/**
  * Invokes a function when any of its internal signals or computed values change.
  * Returns a `dispose` callback.
  * @template T

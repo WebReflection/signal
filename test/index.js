@@ -1,4 +1,4 @@
-import {signal, computed, effect, batch, drain} from '../esm/index.js';
+import {signal, computed, effect, batch} from '../esm/index.js';
 
 const assert = (got, expected) => {
   if (got !== expected) {
@@ -30,8 +30,6 @@ assert(min.value, 12);
 sum.dispose();
 assert(min.value, 12);
 
-assert(single.peek(), 2);
-single.value = drain;
 assert(single.peek(), 2);
 
 single.value++;

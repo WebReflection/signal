@@ -35,10 +35,6 @@
       "import": "./esm/index.js",
       "default": "./cjs/index.js"
     },
-    "./spliced": {
-      "import": "./esm/spliced.js",
-      "default": "./cjs/spliced.js"
-    },
     "./package.json": "./package.json"
   },
   "repository": {
