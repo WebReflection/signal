@@ -4,7 +4,7 @@
 
 <sup>**Social Media Photo by [Louis Reed](https://unsplash.com/@_louisreed) on [Unsplash](https://unsplash.com/)**</sup>
 
-A minimalistic signals implementation, derived from the post [Signals: the nitty-gritty](https://calendar.perfplanet.com/2022/signals-the-nitty-gritty/), which size, once minified and brotlied, is 463 bytes.
+A minimalistic signals implementation, derived from the post [Signals: the nitty-gritty](https://calendar.perfplanet.com/2022/signals-the-nitty-gritty/), which size, once minified and brotlied, is 453 bytes.
 
   * no automatic effect disposal except when an outer effect has inner effects and the outer effect `dispose()` is invoked
   * computed are updated per each signal change they depend on, unless a `batch` operation is updating all inner signals at once

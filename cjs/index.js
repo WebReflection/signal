@@ -14,9 +14,7 @@ class Signal {
 
   /** @returns {T} */
   get value() {
-    const {length} = effects;
-    if (length)
-      this.#effects.push(effects[length - 1]);
+    this.#effects.push(effects.at(-1));
     return this.#value;
   }
 
@@ -24,12 +22,10 @@ class Signal {
   set value(value) {
     if (this.#value !== value) {
       this.#value = value;
-      if (this.#effects.length) {
-        if (batches === effects)
-          dispatch(this.#effects.splice(0));
-        else
-          batches.push(...this.#effects.splice(0));
-      }
+      if (batches === effects)
+        dispatch(this.#effects.splice(0));
+      else
+        batches.push(...this.#effects.splice(0));
     }
   }
 
@@ -124,9 +120,7 @@ const effect = (fn, value) => {
       dispose();
   };
   disposes.set(fx, []);
-  const {length} = effects;
-  if (length)
-    disposes.get(effects[length - 1]).push(dispose);
+  disposes.get(effects.at(-1)).push(dispose);
   return fx(), dispose;
 };
 exports.effect = effect;
@@ -139,8 +133,8 @@ exports.effect = effect;
 const signal = value => new Signal(value);
 exports.signal = signal;
 
-const effects = [];
-const disposes = new WeakMap;
+const effects = [() => {}];
+const disposes = new WeakMap([[effects[0], Object.assign([], {push(){}})]]);
 const dispatch = effects => {
   for (const effect of new Set(effects))
     effect();
