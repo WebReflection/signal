@@ -41,7 +41,7 @@ assert(sum.value, 112);
 assert(sum.toJSON(), 112);
 assert(sum.toString(), '112');
 assert(sum.valueOf(), 112);
-assert(sum.then(), 112);
+assert(await sum, 112);
 assert(sum.peek(), 112);
 
 try {

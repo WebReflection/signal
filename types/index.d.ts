@@ -11,7 +11,7 @@ export class Signal<T> {
     /** @returns {T} */
     get value(): T;
     peek(): T;
-    then(): T;
+    then(resolve: any): void;
     toJSON(): T;
     valueOf(): T;
     toString(): string;

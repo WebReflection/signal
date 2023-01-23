@@ -37,7 +37,7 @@ class Signal {
   peek() { return this.#value }
 
   // IMPLICIT SIDE EFFECT
-  then() { return this.value }
+  then(resolve) { resolve(this.value) }
   toJSON() { return this.value }
   valueOf() { return this.value }
   toString() { return String(this.value) }
