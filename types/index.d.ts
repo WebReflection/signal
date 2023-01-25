@@ -3,6 +3,7 @@
  * @type {(fn:() => void) => void}
  */
 export const batch: (fn: () => void) => void;
+
 /**
  * Invokes a function when any of its internal signals or computed values change.
  * Returns a `dispose` callback.
@@ -10,29 +11,41 @@ export const batch: (fn: () => void) => void;
  * @type {<T>(fn: (v?: T) => T | undefined, value?: T) => () => void}
  */
 export const effect: <T>(fn: (v?: T) => T, value?: T) => () => void;
+
 /**
  * A signal with a value property also exposed via toJSON, toString and valueOf.
  * @template T
  */
 export class Signal<T> extends Set<any> {
     /** @param {T} value the value carried through the signal */
-    constructor(_: any);
+    constructor(value: any);
+
     /** @param {T} value the new value carried through the signal */
     set value(arg: T);
+
     /** @returns {T} */
     get value(): T;
-    _: any;
-    peek(): any;
-    then(resolve: any): void;
+
+    /** Returns the `value` witohut side-effects */
+    peek(): T;
+
+    /** Resolves the `Promise` with implicit side-effects */
+    then(resolve: function): void;
+
+    /** Returns the `value` with implicit side-effects */
     toJSON(): T;
+
+    /** Returns the `value` with implicit side-effects */
     valueOf(): T;
 }
+
 /**
- * Returns a writable Signal that side-effects whenever its value gets updated.
+ * Returns a writable Signal that side-effects whenever its `value` gets updated.
  * @template T
  * @type {<T>(value: T) => Signal<T>}
  */
 export const signal: <T>(value: T) => Signal<T>;
+
 /**
  * A read-only Signal extend that is invoked only when any of the internally
  * used signals, as in within the callback, is unknown or updated.
@@ -45,14 +58,11 @@ export class Computed<T> extends Signal<T> {
      * @param {T | undefined} value the optional initial value of the callback
      */
     constructor(fn: (v?: T) => T, value: T | undefined);
-    /**
-     * Disposes the computed effect to stop receiving updates.
-     * @type {() => void}
-     */
-    dispose: () => void;
+
     /** @readonly @returns {T} */
     get value(): T;
 }
+
 /**
  * Returns a Computed signal that is invoked only when any of the internally
  * used signals, as in within the callback, is unknown or updated.

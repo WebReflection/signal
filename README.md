@@ -4,10 +4,10 @@
 
 <sup>**Social Media Photo by [Louis Reed](https://unsplash.com/@_louisreed) on [Unsplash](https://unsplash.com/)**</sup>
 
-A minimalistic signals implementation, derived from the post [Signals: the nitty-gritty](https://calendar.perfplanet.com/2022/signals-the-nitty-gritty/), which size, once minified and brotlied, is 463 bytes.
+A minimalistic signals implementation, derived from the post [Signals: the nitty-gritty](https://calendar.perfplanet.com/2022/signals-the-nitty-gritty/), which size, once minified and brotlied, is 494 bytes.
 
   * no automatic effect disposal except when an outer effect has inner effects and the outer effect `dispose()` is invoked
-  * computed are updated per each signal change they depend on, unless a `batch` operation is updating all inner signals at once
+  * computed are lazily initialied but updated per each signal change they depend on, unless a `batch` operation is updating all inner signals at once
   * no fancy features from other libraries
 
 For anything more complex please check [usignal](https://github.com/WebReflection/usignal#readme) out.
@@ -15,8 +15,8 @@ For anything more complex please check [usignal](https://github.com/WebReflectio
 ### exports
 
   * `signal(value)` to create a new signal with a reactive `.value`
-  * `computed(fn[, initialValue])` to create a computed signal with a read-only `.value` and a `.dispose()` method
-  * `effect(fn[, stateValue])` to create an effect and return a dispose function
+  * `computed(fn[, initialValue])` to create a computed signal with a read-only `.value`
+  * `effect(fn[, initialValue])` to create an effect and return a dispose function
   * `batch(fn)` to update multiple signals at once and invoke related effects once
   * `Signal` to compare via `instanceof Signal` instances
   * `Computed` to compare via `instanceof Computed` instances

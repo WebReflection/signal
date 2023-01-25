@@ -27,7 +27,7 @@ single.value++;
 
 assert(sum.value, 112);
 assert(min.value, 12);
-sum.dispose();
+sum.e.dispose();
 assert(min.value, 12);
 
 assert(single.peek(), 2);

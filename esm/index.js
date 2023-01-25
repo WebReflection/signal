@@ -35,6 +35,15 @@ class Effect extends Set {
 }
 
 let current = null;
+const create = block => {
+  const fx = new Effect(() => {
+    const prev = current;
+    current = fx;
+    try { block() }
+    finally { current = prev }
+  });
+  return fx;
+};
 
 /**
  * Invokes a function when any of its internal signals or computed values change.
@@ -43,12 +52,7 @@ let current = null;
  * @type {<T>(fn: (v?: T) => T | undefined, value?: T) => () => void}
  */
 export const effect = (fn, value) => {
-  const fx = new Effect(() => {
-    const prev = current;
-    current = fx;
-    try { value = fn(value) }
-    finally { current = prev; }
-  });
+  const fx = create(() => { value = fn(value) });
   if (current) current.add(fx);
   return fx._(), () => fx.dispose();
 };
@@ -109,19 +113,16 @@ export class Computed extends Signal {
    * @param {T | undefined} value the optional initial value of the callback
    */
   constructor(fn, value) {
-    super(value);
-
-    /**
-     * Disposes the computed effect to stop receiving updates.
-     * @type {() => void}
-     */
-    this.dispose = effect(() => {
-      super.value = fn(this._);
-    });
+    super(value).f = fn;
+    this.e = null;
   }
 
   /** @readonly @returns {T} */
-  get value() { return super.value }
+  get value() {
+    if (!this.e)
+      (this.e = create(() => { super.value = this.f(this._) }))._();
+    return super.value;
+  }
 
   /** @throws {Error} */
   set value(_) { throw new Error('computed is read-only') }
