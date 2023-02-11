@@ -18,7 +18,7 @@ export const effect: <T>(fn: (v?: T) => T, value?: T) => () => void;
  */
 export class Signal<T> extends Set<any> {
     /** @param {T} value the value carried through the signal */
-    constructor(value: any);
+    constructor(value: T);
 
     /** @param {T} value the new value carried through the signal */
     set value(arg: T);
@@ -26,7 +26,7 @@ export class Signal<T> extends Set<any> {
     /** @returns {T} */
     get value(): T;
 
-    /** Returns the `value` witohut side-effects */
+    /** Returns the `value` without side-effects */
     peek(): T;
 
     /** Resolves the `Promise` with implicit side-effects */
