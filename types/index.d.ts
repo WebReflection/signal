@@ -30,7 +30,7 @@ export class Signal<T> extends Set<any> {
     peek(): T;
 
     /** Resolves the `Promise` with implicit side-effects */
-    then(resolve: function): void;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: (value: T) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>): Promise<TResult1 | TResult2>;
 
     /** Returns the `value` with implicit side-effects */
     toJSON(): T;
