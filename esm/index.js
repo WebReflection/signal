@@ -88,7 +88,6 @@ export class Signal extends Set {
   peek() { return this._ }
 
   // IMPLICIT SIDE EFFECT
-  then(resolve) { resolve(this.value) }
   toJSON() { return this.value }
   valueOf() { return this.value }
   toString() { return String(this.value) }
