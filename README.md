@@ -24,7 +24,7 @@ For anything more complex please check [usignal](https://github.com/WebReflectio
 Both *computed* and *effect* accepts an initial value to pass to the callback. The callback will keep receiving the previous value on each new invoke.
 
 
-### eample
+### example
 
 ```js
 // import {signal, effect} from 'https://unpkg.com/@webreflection/signal';
