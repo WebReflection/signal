@@ -59,7 +59,7 @@ export const effect = (fn, value) => {
 
 /**
  * Executes a given function without tracking its dependencies.
- * This is useful for actions that should not trigger updates in the reactive system.
+ * This is useful for actions that should not subscribe to updates in the reactive system.
  * @param {Function} fn - The function to execute without dependency tracking.
  */
 export const untracked = (fn) => {
