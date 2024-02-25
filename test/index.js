@@ -1,4 +1,4 @@
-import {signal, computed, effect, batch} from '../esm/index.js';
+import { signal, computed, effect, batch, untracked } from '../esm/index.js';
 
 const assert = (got, expected) => {
   if (got !== expected) {
@@ -47,10 +47,12 @@ try {
   sum.value = 1;
   assert('assignment', 'cannot assign computed');
 }
-catch (OK) {}
+catch (OK) { }
 
+// internal effects
+console.log('')
 let runs = 0;
-const outer = effect(() => {
+let outer = effect(() => {
   runs++;
   console.log('outer effect', single.value);
   effect(() => {
@@ -66,6 +68,26 @@ outer();
 ++double.value;
 assert(runs, 3);
 
+// untracked
+console.log('')
+runs = 0;
+outer = effect(() => {
+  runs++;
+  console.log('tracked effect', single.value);
+  untracked(() => {
+    runs++;
+    console.log('untracked effect', double.value);
+  });
+});
+
+assert(runs, 2);
+++double.value;
+assert(runs, 2);
+outer();
+++double.value;
+assert(runs, 2);
+
+// batched
 runs = 0;
 const d1 = effect(() => {
   runs++;
@@ -85,6 +107,7 @@ assert(runs, 2);
 
 const cmp = computed(() => single + double);
 
+// batched computed
 console.log('');
 runs = 0;
 const d2 = effect(() => {

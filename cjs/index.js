@@ -61,6 +61,19 @@ const effect = (fn, value) => {
 exports.effect = effect;
 
 /**
+ * Executes a given function without tracking its dependencies.
+ * This is useful for actions that should not trigger updates in the reactive system.
+ * @param {Function} fn - The function to execute without dependency tracking.
+ */
+exports.untracked = (fn) => {
+  const prev = current
+  current = null
+  fn()
+  current = prev
+}
+
+
+/**
  * A signal with a value property also exposed via toJSON, toString and valueOf.
  * @template T
  */
