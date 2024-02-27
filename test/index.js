@@ -51,41 +51,49 @@ catch (OK) { }
 
 // internal effects
 console.log('')
-let runs = 0;
-let outer = effect(() => {
+let runs = 0, out = 0;
+let inner, outer = effect(() => {
   runs++;
   console.log('outer effect', single.value);
-  effect(() => {
+  inner = effect(() => {
     runs++;
     console.log('inner effect', double.value);
+    return () => out++
   });
 });
 
 assert(runs, 2);
+assert(out, 0);
 ++double.value;
+assert(out, 1);
 assert(runs, 3);
 outer();
 ++double.value;
 assert(runs, 3);
+assert(out, 1);
+inner()
+assert(out, 2);
 
 // untracked
 console.log('')
-runs = 0;
+runs = 0; out = 0;
 outer = effect(() => {
   runs++;
   console.log('tracked effect', single.value);
-  untracked(() => {
-    runs++;
-    console.log('untracked effect', double.value);
-  });
+  out = untracked(() => (
+    console.log('untracked effect', double.value),
+    runs++
+  ));
 });
 
 assert(runs, 2);
 ++double.value;
 assert(runs, 2);
+assert(out, 1);
 outer();
 ++double.value;
 assert(runs, 2);
+assert(out, 1);
 
 // batched
 runs = 0;
