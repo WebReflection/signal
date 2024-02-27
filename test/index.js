@@ -51,7 +51,7 @@ catch (OK) { }
 
 // internal effects
 console.log('')
-let runs = 0;
+let runs = 0, val;
 let outer = effect(() => {
   runs++;
   console.log('outer effect', single.value);
@@ -72,20 +72,22 @@ assert(runs, 3);
 console.log('')
 runs = 0;
 outer = effect(() => {
-  runs++;
+  ++runs;
   console.log('tracked effect', single.value);
-  untracked(() => {
-    runs++;
-    console.log('untracked effect', double.value);
-  });
+  val = untracked(() => (
+    console.log('untracked effect', double.value),
+    ++runs
+  ));
 });
 
 assert(runs, 2);
 ++double.value;
 assert(runs, 2);
+assert(val, 2);
 outer();
 ++double.value;
 assert(runs, 2);
+assert(val, 2);
 
 // batched
 runs = 0;

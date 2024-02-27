@@ -63,10 +63,11 @@ export const effect = (fn, value) => {
  * @param {Function} fn - The function to execute without dependency tracking.
  */
 export const untracked = (fn) => {
-  const prev = current
+  let prev = current, result
   current = null
-  fn()
+  result = fn()
   current = prev
+  return result
 }
 
 /**
