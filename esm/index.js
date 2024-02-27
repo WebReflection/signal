@@ -35,7 +35,7 @@ class Effect extends Set {
 }
 
 let current = null;
-const create = block => {
+const create = (block) => {
   const fx = new Effect(() => {
     const prev = current;
     current = fx;
@@ -51,8 +51,8 @@ const create = block => {
  * @template T
  * @type {<T>(fn: (v?: T) => T | undefined, value?: T) => () => void}
  */
-export const effect = (fn, value) => {
-  const fx = create(() => { value = fn(value) });
+export const effect = (fn) => {
+  let teardown, fx = create(() => { teardown?.call?.(); teardown = fn() });
   if (current) current.add(fx);
   return fx._(), () => fx.dispose();
 };
