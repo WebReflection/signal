@@ -37,7 +37,7 @@ class Effect extends Set {
 }
 
 let current = null;
-const create = block => {
+const create = (block) => {
   const fx = new Effect(() => {
     const prev = current;
     current = fx;
@@ -53,8 +53,8 @@ const create = block => {
  * @template T
  * @type {<T>(fn: (v?: T) => T | undefined, value?: T) => () => void}
  */
-const effect = (fn, value) => {
-  const fx = create(() => { value = fn(value) });
+const effect = (fn) => {
+  let teardown, fx = create(() => { teardown?.call?.(); teardown = fn() });
   if (current) current.add(fx);
   return fx._(), () => fx.dispose();
 };
@@ -66,10 +66,11 @@ exports.effect = effect;
  * @param {Function} fn - The function to execute without dependency tracking.
  */
 const untracked = (fn) => {
-  const prev = current
+  let prev = current, result
   current = null
-  fn()
+  result = fn()
   current = prev
+  return result
 }
 exports.untracked = untracked
 
