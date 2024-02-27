@@ -52,10 +52,10 @@ catch (OK) { }
 // internal effects
 console.log('')
 let runs = 0, out = 0;
-let outer = effect(() => {
+let inner, outer = effect(() => {
   runs++;
   console.log('outer effect', single.value);
-  effect(() => {
+  inner = effect(() => {
     runs++;
     console.log('inner effect', double.value);
     return () => out++
@@ -71,6 +71,8 @@ outer();
 ++double.value;
 assert(runs, 3);
 assert(out, 1);
+inner()
+assert(out, 2);
 
 // untracked
 console.log('')

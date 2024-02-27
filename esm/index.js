@@ -54,7 +54,7 @@ const create = (block) => {
 export const effect = (fn) => {
   let teardown, fx = create(() => { teardown?.call?.(); teardown = fn() });
   if (current) current.add(fx);
-  return fx._(), () => fx.dispose();
+  return fx._(), () => (teardown?.call?.(), fx.dispose());
 };
 
 /**
