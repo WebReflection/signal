@@ -31,7 +31,8 @@
   "exports": {
     ".": {
       "import": "./esm/index.js",
-      "default": "./cjs/index.js"
+      "default": "./cjs/index.js",
+      "types": "./types/index.d.ts"
     },
     "./package.json": "./package.json"
   },
