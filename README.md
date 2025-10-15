@@ -4,6 +4,16 @@
 
 <sup>**Social Media Photo by [Louis Reed](https://unsplash.com/@_louisreed) on [Unsplash](https://unsplash.com/)**</sup>
 
+- - -
+
+## Archived
+
+This library works fine but I wrote another one that works better: **[dom-cue](https://github.com/WebReflection/dom-cue#readme)**
+
+The current size of *dom-cue* is 556 bytes, very close to this one, but it has way more tests, performance improvements and, most importantly, it's easier to maintain, better typed/docummented (it's literally Preact API on the surface) and it's going to be my minimalistic reference implementation from now on.
+
+- - -
+
 A minimalistic signals implementation, derived from the post [Signals: the nitty-gritty](https://calendar.perfplanet.com/2022/signals-the-nitty-gritty/), which size, once minified and brotlied, is 528 bytes.
 
   * no automatic effect disposal except when an outer effect has inner effects and the outer effect `dispose()` is invoked
